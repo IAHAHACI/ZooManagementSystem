@@ -1,8 +1,13 @@
 ﻿#include <iostream>
 #include <iomanip>
+
+#define NOMINMAX
 #include <windows.h>
+
+
 #include <string>
 #include <vector>
+#include <limits>
 
 struct Animal
 {
@@ -25,7 +30,21 @@ void startOutput()
     std::cout << "| Оберіть дію: ";
 }
 
-void addNewAnimal(std::vector<Animal>& animals, int& animalIdentificationNumber)
+void correctInputCheckerForInt(int& value)
+{
+    std::cin >> value;
+    std::cout << std::endl;
+
+    while (std::cin.fail() || std::cin.peek() != '\n')
+    {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Некоректне значення! Введіть ціле число: ";
+        std::cin >> value;
+    }
+}
+
+void addNewAnimal(std::vector<Animal>& animals, int& lastAnimalIdentificationNumber)
 {
     std::string newAnimalName;
     std::string typeOfNewAnimal;
@@ -37,8 +56,8 @@ void addNewAnimal(std::vector<Animal>& animals, int& animalIdentificationNumber)
     std::cout << "Введіть вид нової тварини: ";
     std::cin >> typeOfNewAnimal;
 
-    animalIdentificationNumber++;
-    newAnimalIdentificationNumber = animalIdentificationNumber;
+    lastAnimalIdentificationNumber++;
+    newAnimalIdentificationNumber = lastAnimalIdentificationNumber;
 
     newAnimalData.nameOfAnimal = newAnimalName;
     newAnimalData.typeOfAnimal = typeOfNewAnimal;
@@ -51,6 +70,12 @@ void addNewAnimal(std::vector<Animal>& animals, int& animalIdentificationNumber)
 
 void showAnimalList(const std::vector<Animal>& animals)
 {
+    if (animals.empty())
+    {
+        std::cout << "Вивід пустого списку неможливий!" << std::endl;
+        return;
+    }
+
     std::cout << "===== СПИСОК ТВАРИН =====" << std::endl;
     std::cout << std::endl;
 
@@ -62,8 +87,13 @@ void showAnimalList(const std::vector<Animal>& animals)
     }
 }
 
-int binarCycleForNeededAnimalSearch(const std::vector<Animal>& animals, int identificatorOfAnimalToBeFound)
+int binaryCycleForNeededAnimalSearch(const std::vector<Animal>& animals, int identificatorOfAnimalToBeFound)
 {
+    if (animals.empty())
+    {
+        return -1;
+    }
+
     int leftIndexOfTheVector = 0,
         rightIndexOfTheVector = animals.size() - 1,
         middlePartOfTheVector;
@@ -92,11 +122,17 @@ int binarCycleForNeededAnimalSearch(const std::vector<Animal>& animals, int iden
 void searchAnimalByIdentificationNumber(const std::vector<Animal>& animals)
 {
     int identificatorOfAnimalToBeFound;
-    std::cout << "Введіть ID тварини: ";
-    std::cin >> identificatorOfAnimalToBeFound;
-    std::cout << std::endl;
 
-    int vectorElementOfSearchedAnimal = binarCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeFound);
+    if (animals.empty())
+    {
+        std::cout << "У списку немає даних для пошуку!" << std::endl;
+        return;
+    }
+
+    std::cout << "Введіть ID тварини: ";
+    correctInputCheckerForInt(identificatorOfAnimalToBeFound);
+
+    int vectorElementOfSearchedAnimal = binaryCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeFound);
 
     if (vectorElementOfSearchedAnimal < 0)
     {
@@ -112,15 +148,20 @@ void searchAnimalByIdentificationNumber(const std::vector<Animal>& animals)
 
 void editDataOfAnimal(std::vector<Animal>& animals)
 {
+    if (animals.empty())
+    {
+        std::cout << "У списку немає даних для редагування!" << std::endl;
+        return;
+    }
+
     int choiceOfActionsMenu;
     int identificatorOfAnimalToBeFound;
     std::string newNameOrTypeOfTheAnimal;
 
     std::cout << "Введіть ID тварини: ";
-    std::cin >> identificatorOfAnimalToBeFound;
-    std::cout << std::endl;
+    correctInputCheckerForInt(identificatorOfAnimalToBeFound);
 
-    int vectorElementOfSearchedAnimal = binarCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeFound);
+    int vectorElementOfSearchedAnimal = binaryCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeFound);
 
     if (vectorElementOfSearchedAnimal < 0)
     {
@@ -135,8 +176,7 @@ void editDataOfAnimal(std::vector<Animal>& animals)
     std::cout << std::endl;
 
     std::cout << "Виберіть пункт меню: ";
-
-    std::cin >> choiceOfActionsMenu;
+    correctInputCheckerForInt(choiceOfActionsMenu);
 
     switch (choiceOfActionsMenu)
     {
@@ -167,11 +207,16 @@ void deleteAnimalFromVector(std::vector<Animal>& animals)
 {
     int identificatorOfAnimalToBeDeleted;
 
-    std::cout << "Введіть ID тварини: ";
-    std::cin >> identificatorOfAnimalToBeDeleted;
-    std::cout << std::endl;
+    if (animals.empty())
+    {
+        std::cout << "У списку немає даних для видалення!" << std::endl;
+        return;
+    }
 
-    int vectorElementOfSearchedAnimal = binarCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeDeleted);
+    std::cout << "Введіть ID тварини: ";
+    correctInputCheckerForInt(identificatorOfAnimalToBeDeleted);
+
+    int vectorElementOfSearchedAnimal = binaryCycleForNeededAnimalSearch(animals, identificatorOfAnimalToBeDeleted);
 
     if (vectorElementOfSearchedAnimal < 0)
     {
@@ -181,13 +226,13 @@ void deleteAnimalFromVector(std::vector<Animal>& animals)
     }
     
     int confirmationOfDelete;
-    std::cout << "Ви підтверджуєте видалення тварини? (1 - так / 0 - ні):";
-    std::cin >> confirmationOfDelete;
+    std::cout << "Ви підтверджуєте видалення тварини? (1 - так / 0 - ні): ";
+    correctInputCheckerForInt(confirmationOfDelete);
 
     while (confirmationOfDelete != 1 && confirmationOfDelete != 0)
     {
         std::cout << "Введіть коректне значення!: ";
-        std::cin >> confirmationOfDelete;
+        correctInputCheckerForInt(confirmationOfDelete);
     }
 
     if (confirmationOfDelete == 0)
@@ -212,8 +257,7 @@ int main()
     {   
         int choice;
         startOutput();
-        std::cin >> choice;
-        std::cout << std::endl;
+        correctInputCheckerForInt(choice);
 
         switch (choice)
         {
