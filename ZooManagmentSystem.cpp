@@ -25,7 +25,7 @@ void startOutput()
     std::cout << "| Оберіть дію: ";
 }
 
-void addNewAnimal(std::vector<Animal>& animals)
+void addNewAnimal(std::vector<Animal>& animals, int& animalIdentificationNumber)
 {
     std::string newAnimalName;
     std::string typeOfNewAnimal;
@@ -36,8 +36,9 @@ void addNewAnimal(std::vector<Animal>& animals)
     std::cin >> newAnimalName;
     std::cout << "Введіть вид нової тварини: ";
     std::cin >> typeOfNewAnimal;
-    std::cout << "Введіть ідентифікаційний номер нової тварини: ";
-    std::cin >> newAnimalIdentificationNumber;
+
+    animalIdentificationNumber++;
+    newAnimalIdentificationNumber = animalIdentificationNumber;
 
     newAnimalData.nameOfAnimal = newAnimalName;
     newAnimalData.typeOfAnimal = typeOfNewAnimal;
@@ -113,7 +114,6 @@ void editDataOfAnimal(std::vector<Animal>& animals)
 {
     int choiceOfActionsMenu;
     int identificatorOfAnimalToBeFound;
-    int newIdentificatorOfTheAnimal;
     std::string newNameOrTypeOfTheAnimal;
 
     std::cout << "Введіть ID тварини: ";
@@ -129,9 +129,8 @@ void editDataOfAnimal(std::vector<Animal>& animals)
         return;
     }
 
-    std::cout << "1. Змінити ID тварини" << std::endl;
-    std::cout << "2. Змінити ім'я тварини" << std::endl;
-    std::cout << "3. Змінити вид тварини" << std::endl;
+    std::cout << "1. Змінити ім'я тварини" << std::endl;
+    std::cout << "2. Змінити вид тварини" << std::endl;
     std::cout << "0. Повернутись" << std::endl;
     std::cout << std::endl;
 
@@ -142,20 +141,13 @@ void editDataOfAnimal(std::vector<Animal>& animals)
     switch (choiceOfActionsMenu)
     {
         case 1:
-            std::cout << "Введіть нове ID тварини: ";
-            std::cin >> newIdentificatorOfTheAnimal;
-
-            animals[vectorElementOfSearchedAnimal].animalIdentificationNumber = newIdentificatorOfTheAnimal;
-            std::cout << "ID тварини змінено успішно!" << std::endl;
-        break;
-        case 2:
             std::cout << "Введіть нове ім'я тварини: ";
             std::cin >> newNameOrTypeOfTheAnimal;
 
             animals[vectorElementOfSearchedAnimal].nameOfAnimal = newNameOrTypeOfTheAnimal;
             std::cout << "Ім'я тварини змінено успішно!" << std::endl;
             break;
-        case 3:
+        case 2:
             std::cout << "Введіть новий тип тварини: ";
             std::cin >> newNameOrTypeOfTheAnimal;
 
@@ -214,6 +206,7 @@ int main()
     SetConsoleOutputCP(1251);
     SetConsoleCP(1251);
     std::vector<Animal> animals;
+    int lastAnimalIdentificationNumber = 10000000;
 
     while (true)
     {   
@@ -225,7 +218,7 @@ int main()
         switch (choice)
         {
             case 1:
-                addNewAnimal(animals);
+                addNewAnimal(animals, lastAnimalIdentificationNumber);
                 break;
             case 2:
                 showAnimalList(animals);
