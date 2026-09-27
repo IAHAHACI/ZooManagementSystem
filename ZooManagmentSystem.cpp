@@ -42,6 +42,31 @@ void correctInputCheckerForInt(int& value)
         std::cout << "Некоректне значення! Введіть ціле число: ";
         std::cin >> value;
     }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void correctInputCheckerForString(std::string& animalStringData)
+{
+    while (true)
+    {
+        std::getline(std::cin, animalStringData);
+        bool hasAtLeastOneSymbol = false;
+
+        for (int i = 0; i < animalStringData.size(); i++)
+        {
+            if (animalStringData[i] != ' ')
+            {
+                hasAtLeastOneSymbol = true;
+                break;
+            }
+        }
+
+        if (hasAtLeastOneSymbol)
+        {
+            break;
+        }
+        std::cout << "Некоректне значення! Потрібен текст: ";
+    }
 }
 
 void addNewAnimal(std::vector<Animal>& animals, int& lastAnimalIdentificationNumber)
@@ -52,9 +77,10 @@ void addNewAnimal(std::vector<Animal>& animals, int& lastAnimalIdentificationNum
     Animal newAnimalData;
 
     std::cout << "Введіть ім'я нової тварини: ";
-    std::cin >> newAnimalName;
+    correctInputCheckerForString(newAnimalName);
+
     std::cout << "Введіть вид нової тварини: ";
-    std::cin >> typeOfNewAnimal;
+    correctInputCheckerForString(typeOfNewAnimal);
 
     lastAnimalIdentificationNumber++;
     newAnimalIdentificationNumber = lastAnimalIdentificationNumber;
@@ -182,14 +208,14 @@ void editDataOfAnimal(std::vector<Animal>& animals)
     {
         case 1:
             std::cout << "Введіть нове ім'я тварини: ";
-            std::cin >> newNameOrTypeOfTheAnimal;
+            correctInputCheckerForString(newNameOrTypeOfTheAnimal);
 
             animals[vectorElementOfSearchedAnimal].nameOfAnimal = newNameOrTypeOfTheAnimal;
             std::cout << "Ім'я тварини змінено успішно!" << std::endl;
             break;
         case 2:
             std::cout << "Введіть новий тип тварини: ";
-            std::cin >> newNameOrTypeOfTheAnimal;
+            correctInputCheckerForString(newNameOrTypeOfTheAnimal);
 
             animals[vectorElementOfSearchedAnimal].typeOfAnimal = newNameOrTypeOfTheAnimal;
 
